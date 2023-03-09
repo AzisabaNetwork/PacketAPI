@@ -1,0 +1,4 @@
+name: PacketAPI
+version: @version@
+main: net.azisaba.packetapi.plugin.PacketAPIPlugin
+api-version: 1.13

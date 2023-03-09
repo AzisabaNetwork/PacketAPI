@@ -21,7 +21,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'temurin'
-          cache: 'maven'
+          cache: 'gradle'
       - name: Check 1.15.2 NMS existence
         id: check_nms
         uses: andstor/file-existence-action@v1

@@ -49,14 +49,20 @@ public class PacketDataAccessorImpl implements PacketDataAccessor {
     }
 
     @Override
-    public @NotNull Location getLocationInUseEntity(@NotNull World world, @NotNull Object packetPlayInUseEntity) {
+    public @Nullable Location getLocationInUseEntity(@NotNull World world, @NotNull Object packetPlayInUseEntity) {
         Vec3D pos = ((PacketPlayInUseEntity) packetPlayInUseEntity).d();
+        if (pos == null) {
+            return null;
+        }
         return new Location(world, pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Override
-    public @NotNull EquipmentSlot getHandInUseEntity(@NotNull Object packetPlayInUseEntity) {
+    public @Nullable EquipmentSlot getHandInUseEntity(@NotNull Object packetPlayInUseEntity) {
         EnumHand hand = ((PacketPlayInUseEntity) packetPlayInUseEntity).c();
+        if (hand == null) {
+            return null;
+        }
         return hand == EnumHand.MAIN_HAND ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
     }
 }

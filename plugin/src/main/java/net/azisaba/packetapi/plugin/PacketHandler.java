@@ -25,24 +25,28 @@ public class PacketHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(@NotNull ChannelHandlerContext ctx, @NotNull Object msg) throws Exception {
-        if (msg.getClass().getSimpleName().equals("PacketPlayInUpdateSign")) {
-            Location location = packetDataAccessor.getLocationInUpdateSign(player.getWorld(), msg);
-            String[] lines = packetDataAccessor.getLinesInUpdateSign(msg);
-            AsyncPlayerPreSignChangeEvent event = new AsyncPlayerPreSignChangeEvent(player, location, Arrays.asList(lines));
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return;
+        try {
+            if (msg.getClass().getSimpleName().equals("PacketPlayInUpdateSign")) {
+                Location location = packetDataAccessor.getLocationInUpdateSign(player.getWorld(), msg);
+                String[] lines = packetDataAccessor.getLinesInUpdateSign(msg);
+                AsyncPlayerPreSignChangeEvent event = new AsyncPlayerPreSignChangeEvent(player, location, Arrays.asList(lines));
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    return;
+                }
+            } else if (msg.getClass().getSimpleName().equals("PacketPlayInUseEntity")) {
+                AsyncPlayerPreInteractEvent.Action action = packetDataAccessor.getActionInUseEntity(msg);
+                Entity entity = packetDataAccessor.getEntityInUseEntity(player.getWorld(), msg);
+                Location location = packetDataAccessor.getLocationInUseEntity(player.getWorld(), msg);
+                EquipmentSlot hand = packetDataAccessor.getHandInUseEntity(msg);
+                AsyncPlayerPreInteractEvent event = new AsyncPlayerPreInteractEvent(player, action, entity, location, hand);
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    return;
+                }
             }
-        } else if (msg.getClass().getSimpleName().equals("PacketPlayInUseEntity")) {
-            AsyncPlayerPreInteractEvent.Action action = packetDataAccessor.getActionInUseEntity(msg);
-            Entity entity = packetDataAccessor.getEntityInUseEntity(player.getWorld(), msg);
-            Location location = packetDataAccessor.getLocationInUseEntity(player.getWorld(), msg);
-            EquipmentSlot hand = packetDataAccessor.getHandInUseEntity(msg);
-            AsyncPlayerPreInteractEvent event = new AsyncPlayerPreInteractEvent(player, action, entity, location, hand);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return;
-            }
+        } catch (Exception e) {
+            new RuntimeException("Caught exception while handling packet", e).printStackTrace();
         }
         super.channelRead(ctx, msg);
     }

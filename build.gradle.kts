@@ -50,6 +50,17 @@ allprojects {
             relocate("org.jetbrains", "net.azisaba.playersync.lib.org.jetbrains")
             relocate("org.intellij", "net.azisaba.playersync.lib.org.intellij")
         }
+
+        compileJava {
+            options.encoding = "UTF-8"
+        }
+    }
+
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+
+        withSourcesJar()
+        withJavadocJar()
     }
 
     publishing {
